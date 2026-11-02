@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Notebook’s really?</title>
+<style>
+:root{--bg:#efe6d6;--paper:#fffdf7;--ink:#2b2a33;--muted:#7a7468;--line:#cfdcec;--margin:#e58a8a;--card:#fffaf0;--bd:#d8cdb6;--acc:#3b5bdb;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1d1b19;--paper:#2a2824;--ink:#ece6da;--muted:#a49c8c;--line:#3a4252;--margin:#8f4a4a;--card:#312e29;--bd:#47423a;--acc:#8ea2ff;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1d1b19;--paper:#2a2824;--ink:#ece6da;--muted:#a49c8c;--line:#3a4252;--margin:#8f4a4a;--card:#312e29;--bd:#47423a;--acc:#8ea2ff;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;min-height:100vh}
+.wrap{max-width:860px;margin:0 auto;padding:14px 12px 40px}
+h1{margin:6px 4px 12px;font-family:"Georgia","Times New Roman",serif;font-size:1.7rem;letter-spacing:.2px}
+h1 small{font-size:.8rem;color:var(--muted);font-family:inherit;font-weight:400;margin-left:8px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:0 4px;align-items:flex-end}
+.tab{flex:0 0 auto;border:1px solid var(--bd);border-bottom:none;border-radius:10px 10px 0 0;padding:9px 14px;background:var(--card);color:var(--ink);font:inherit;font-size:.92rem;cursor:pointer;border-top:5px solid var(--c,#999);opacity:.75}
+.tab.on{opacity:1;background:var(--paper);font-weight:600;padding-bottom:12px}
+.tab.add{border-top-color:var(--bd);color:var(--muted)}
+.sheet{background:var(--paper);border:1px solid var(--bd);border-radius:0 12px 12px 12px;box-shadow:0 6px 18px rgba(0,0,0,.12);overflow:hidden}
+.bar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:10px 12px;border-bottom:1px solid var(--bd);background:var(--card)}
+.chip{border:1px solid var(--bd);background:var(--paper);color:var(--ink);border-radius:999px;padding:5px 12px;font:inherit;font-size:.85rem;cursor:pointer;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.sp{flex:1}
+.ghost{border:none;background:none;color:var(--muted);font:inherit;font-size:.82rem;cursor:pointer;padding:4px 6px}
+.ghost:hover{color:var(--ink);text-decoration:underline}
+.page{position:relative;padding:14px 14px 14px 56px;background-image:linear-gradient(90deg,transparent 42px,var(--margin) 42px,var(--margin) 43px,transparent 43px)}
+.ptitle{width:100%;border:none;background:none;color:var(--ink);font-family:Georgia,serif;font-size:1.35rem;font-weight:700;outline:none;padding:0;height:34px}
+textarea{display:block;width:100%;min-height:55vh;border:none;outline:none;resize:vertical;background-color:transparent;color:var(--ink);font:inherit;font-size:1rem;line-height:32px;padding:0;background-image:repeating-linear-gradient(transparent 0 31px,var(--line) 31px 32px);background-attachment:local}
+.foot{display:flex;gap:8px;align-items:center;padding:8px 12px;border-top:1px solid var(--bd);font-size:.8rem;color:var(--muted)}
+.empty{padding:50px 20px;text-align:center;color:var(--muted)}
+.btn{border:none;background:var(--acc);color:#fff;border-radius:8px;padding:9px 16px;font:inherit;cursor:pointer}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:20}
+.ov.on{display:flex}
+.dlg{background:var(--paper);border-radius:14px;padding:18px;width:100%;max-width:340px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.dlg h3{margin:0 0 10px;font-size:1.05rem}
+.dlg input[type=text]{width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--ink);font:inherit}
+.cols{display:flex;gap:8px;margin:12px 0 4px}
+.col{width:26px;height:26px;border-radius:50%;border:3px solid transparent;cursor:pointer;padding:0}
+.col.on{border-color:var(--ink)}
+.acts{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+.btn.sec{background:var(--card);color:var(--ink);border:1px solid var(--bd)}
+.btn.del{background:#c0392b}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Notebook’s really?<small>seu caderno digital</small></h1>
+  <div class="tabs" id="tabs"></div>
+  <div class="sheet" id="sheet"></div>
+</div>
+<div class="ov" id="ov"><div class="dlg" id="dlg"></div></div>
+<script>
+(function(){
+var KEY='nbr:v1',COLORS=['#e03131','#f08c00','#2f9e44','#1c7ed6','#7048e8','#d6336c','#0c8599'];
+var S={subjects:[],s:null,p:null};
+try{var r=localStorage.getItem(KEY);if(r){var d=JSON.parse(r);if(d&&d.subjects)S=d;}}catch(e){}
+var saveT,$=function(i){return document.getElementById(i)};
+function uid(){return Math.random().toString(36).slice(2,9)}
+function save(now){var st=$('st');if(st)st.textContent='Salvando…';clearTimeout(saveT);saveT=setTimeout(function(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}var st2=$('st');if(st2)st2.textContent='Salvo neste aparelho ✓';},now?0:400)}
+function subj(){return S.subjects.filter(function(x){return x.id===S.s})[0]}
+function pg(){var s=subj();return s&&s.pages.filter(function(x){return x.id===S.p})[0]}
+function ask(o){return new Promise(function(res){
+  var color=o.color||COLORS[S.subjects.length%COLORS.length];
+  var h='<h3>'+o.title+'</h3>';
+  if(o.input)h+='<input type="text" id="di" maxlength="40" placeholder="'+(o.ph||'')+'" value="">';
+  if(o.colors)h+='<div class="cols">'+COLORS.map(function(c){return '<button class="col'+(c===color?' on':'')+'" data-c="'+c+'" style="background:'+c+'"></button>'}).join('')+'</div>';
+  if(o.msg)h+='<p style="margin:0;color:var(--muted)">'+o.msg+'</p>';
+  h+='<div class="acts"><button class="btn sec" id="dn">Cancelar</button><button class="btn'+(o.danger?' del':'')+'" id="dy">'+o.ok+'</button></div>';
+  $('dlg').innerHTML=h;$('ov').classList.add('on');
+  var di=$('di');if(di){di.value=o.value||'';di.focus();di.select();}
+  $('dlg').querySelectorAll('.col').forEach(function(b){b.onclick=function(){color=b.dataset.c;$('dlg').querySelectorAll('.col').forEach(function(x){x.classList.toggle('on',x===b)})}});
+  function close(v){$('ov').classList.remove('on');res(v)}
+  $('dn').onclick=function(){close(null)};
+  $('dy').onclick=function(){var v=di?di.value.trim():'';if(o.input&&!v)return;close({v:v,color:color})};
+  if(di)di.onkeydown=function(e){if(e.key==='Enter')$('dy').click()};
+})}
+function render(){
+  var t=$('tabs');t.innerHTML='';
+  S.subjects.forEach(function(s){var b=document.createElement('button');b.className='tab'+(s.id===S.s?' on':'');b.style.setProperty('--c',s.color);b.textContent=s.name;b.onclick=function(){S.s=s.id;S.p=s.pages[0]&&s.pages[0].id;save(1);render()};t.appendChild(b)});
+  var a=document.createElement('button');a.className='tab add';a.textContent='+ Matéria';a.onclick=addSubject;t.appendChild(a);
+  var sh=$('sheet'),s=subj();
+  if(!s){sh.innerHTML='<div class="empty"><p>Seu caderno está vazio.<br>Crie a primeira matéria para começar.</p><button class="btn" id="e1">+ Nova matéria</button></div>';$('e1').onclick=addSubject;return}
+  var h='<div class="bar">';
+  s.pages.forEach(function(p){h+='<button class="chip'+(p.id===S.p?' on':'')+'" data-p="'+p.id+'"></button>'});
+  h+='<button class="chip" id="np">+ Página</button><span class="sp"></span><button class="ghost" id="rn">Renomear matéria</button><button class="ghost" id="dl">Excluir matéria</button></div>';
+  var p=pg();
+  if(p)h+='<div class="page"><input class="ptitle" id="pt" maxlength="60" placeholder="Título da página"><textarea id="tx" placeholder="Escreva aqui…"></textarea></div><div class="foot"><span id="st">Salvo neste aparelho ✓</span><span class="sp"></span><button class="ghost" id="dp">Excluir página</button></div>';
+  else h+='<div class="empty"><p>Esta matéria ainda não tem páginas.</p><button class="btn" id="np2">+ Nova página</button></div>';
+  sh.innerHTML=h;
+  sh.querySelectorAll('.chip[data-p]').forEach(function(c){var pp=s.pages.filter(function(x){return x.id===c.dataset.p})[0];c.textContent=pp.title||'Sem título';c.onclick=function(){S.p=pp.id;save(1);render()}});
+  $('np').onclick=addPage;if($('np2'))$('np2').onclick=addPage;
+  $('rn').onclick=function(){ask({title:'Renomear matéria',input:1,value:s.name,colors:1,color:s.color,ok:'Salvar'}).then(function(r){if(r){s.name=r.v;s.color=r.color;save(1);render()}})};
+  $('dl').onclick=function(){ask({title:'Excluir “'+s.name+'”?',msg:'Todas as páginas dessa matéria serão apagadas.',ok:'Excluir',danger:1}).then(function(r){if(r){S.subjects=S.subjects.filter(function(x){return x.id!==s.id});var n=S.subjects[0];S.s=n&&n.id;S.p=n&&n.pages[0]&&n.pages[0].id;save(1);render()}})};
+  if(p){var pt=$('pt'),tx=$('tx');pt.value=p.title;tx.value=p.text;
+    pt.oninput=function(){p.title=pt.value;var c=sh.querySelector('.chip.on');if(c)c.textContent=p.title||'Sem título';save()};
+    tx.oninput=function(){p.text=tx.value;save()};
+    $('dp').onclick=function(){ask({title:'Excluir esta página?',ok:'Excluir',danger:1}).then(function(r){if(r){s.pages=s.pages.filter(function(x){return x.id!==p.id});S.p=s.pages[0]&&s.pages[0].id;save(1);render()}})};}
+}
+function addSubject(){ask({title:'Nova matéria',input:1,ph:'Ex.: Matemática',colors:1,ok:'Criar'}).then(function(r){if(!r)return;var pgn={id:uid(),title:'Página 1',text:''};var s={id:uid(),name:r.v,color:r.color,pages:[pgn]};S.subjects.push(s);S.s=s.id;S.p=pgn.id;save(1);render()})}
+function addPage(){var s=subj();ask({title:'Nova página',input:1,ph:'Ex.: Aula 3',value:'Página '+(s.pages.length+1),ok:'Criar'}).then(function(r){if(!r)return;var p={id:uid(),title:r.v,text:''};s.pages.push(p);S.p=p.id;save(1);render()})}
+if(!subj()&&S.subjects[0]){S.s=S.subjects[0].id;S.p=S.subjects[0].pages[0]&&S.subjects[0].pages[0].id}
+if(subj()&&!pg()&&subj().pages[0])S.p=subj().pages[0].id;
+render();
+})();
+</script>
+</body>
+</html>
