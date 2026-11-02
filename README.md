@@ -6,3 +6,6 @@ Seu caderno digital, direto no navegador.
 💾 Salvamento automático, sem cadastro
 🌙 Modo escuro automático
 📱 Funciona no celular e no computador
+
+E você pode acessar pelo site:
+https://niccodepromador.github.io/Notebook-s-Really/
