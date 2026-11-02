@@ -1,2 +1,8 @@
-# Notebook-s-Really
-📓 Notebook’s really? é o seu caderno digital: crie matérias, separe em abas coloridas e organize suas anotações em páginas, direto no navegador. Média (para compartilhar com amigos): Notebook’s really? é um caderno digital simples. Você cria suas matérias, dá o nome e a cor que quiser e escreve em páginas pautadas, como num caderno normal.
+📓 Notebook’s really?
+Seu caderno digital, direto no navegador.
+📚 Crie quantas matérias quiser, cada uma com nome e cor
+📄 Várias páginas em cada matéria
+✍️ Folha pautada com margem, como no papel
+💾 Salvamento automático, sem cadastro
+🌙 Modo escuro automático
+📱 Funciona no celular e no computador
